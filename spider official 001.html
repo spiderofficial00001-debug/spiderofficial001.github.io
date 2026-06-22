@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Spider Official 001 — v7</title>
+</head>
+<body>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:#0a0010;color:#fff;font-family:'Rajdhani',sans-serif;overflow-x:hidden;}
+#webCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.13;}
+.wrap{position:relative;z-index:1;}
+nav{background:rgba(10,0,16,0.96);backdrop-filter:blur(14px);border-bottom:1px solid rgba(191,0,255,0.3);padding:0.65rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
+.nav-brand{font-family:'Orbitron',sans-serif;font-size:0.88rem;font-weight:900;background:linear-gradient(90deg,#ff0080,#bf00ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:2px;}
+.nav-links{display:flex;gap:0.9rem;list-style:none;}
+.nav-links li a{color:rgba(255,255,255,0.65);text-decoration:none;font-weight:700;font-size:0.8rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;padding:0.35rem 0.7rem;border-radius:6px;border:1px solid transparent;transition:all 0.18s;}
+.nav-links li a:hover{color:#bf00ff;border-color:rgba(191,0,255,0.35);background:rgba(191,0,255,0.08);}
+
+/* HERO */
+.hero{padding:7rem 1.5rem 2.5rem;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:380px;height:380px;background:radial-gradient(circle,rgba(180,0,255,0.18) 0%,transparent 70%);border-radius:50%;animation:pulse 3s ease-in-out infinite;pointer-events:none;}
+@keyframes pulse{0%,100%{transform:translate(-50%,-50%) scale(1);}50%{transform:translate(-50%,-50%) scale(1.18);}}
+.spider-logo{font-size:3.8rem;display:block;margin-bottom:0.45rem;filter:drop-shadow(0 0 22px rgba(200,0,255,0.9));animation:drop 0.9s cubic-bezier(0.34,1.56,0.64,1) both;}
+@keyframes drop{from{transform:translateY(-70px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.hero-title{font-family:'Orbitron',sans-serif;font-size:1.9rem;font-weight:900;letter-spacing:4px;background:linear-gradient(135deg,#ff0080,#bf00ff,#0080ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.25rem;line-height:1.1;}
+.hero-sub{font-size:0.85rem;color:rgba(255,255,255,0.45);letter-spacing:4px;text-transform:uppercase;margin-bottom:0.9rem;}
+.hero-btns{display:flex;gap:0.65rem;flex-wrap:wrap;justify-content:center;}
+.btn-yt{display:inline-flex;align-items:center;gap:0.4rem;background:linear-gradient(135deg,#ff0000,#cc0000);border:none;color:#fff;padding:0.6rem 1.4rem;font-family:'Orbitron',sans-serif;font-size:0.73rem;font-weight:700;letter-spacing:2px;border-radius:50px;cursor:pointer;transition:transform 0.18s,box-shadow 0.18s;box-shadow:0 0 18px rgba(255,0,0,0.35);text-transform:uppercase;text-decoration:none;}
+.btn-yt:hover{transform:translateY(-2px);box-shadow:0 0 30px rgba(255,0,0,0.6);}
+.btn-game{background:linear-gradient(135deg,#ff0080,#bf00ff);border:none;color:#fff;padding:0.6rem 1.4rem;font-family:'Orbitron',sans-serif;font-size:0.73rem;font-weight:700;letter-spacing:2px;border-radius:50px;cursor:pointer;transition:transform 0.18s,box-shadow 0.18s;box-shadow:0 0 18px rgba(191,0,255,0.35);text-transform:uppercase;}
+.btn-game:hover{transform:translateY(-2px);box-shadow:0 0 30px rgba(191,0,255,0.6);}
+
+.divider{border:none;border-top:1px solid rgba(191,0,255,0.12);}
+.section{padding:2rem 1.5rem;max-width:1050px;margin:0 auto;}
+.sec-title{font-family:'Orbitron',sans-serif;font-size:1.2rem;font-weight:900;text-align:center;margin-bottom:0.3rem;background:linear-gradient(90deg,#ff0080,#bf00ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:3px;}
+.sec-line{width:55px;height:3px;background:linear-gradient(90deg,#ff0080,#bf00ff);margin:0.35rem auto 1rem;border-radius:2px;}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0.65rem;}
+.stat-card{background:rgba(191,0,255,0.07);border:1px solid rgba(191,0,255,0.18);border-radius:11px;padding:0.8rem 0.5rem;text-align:center;}
+.stat-num{font-family:'Orbitron',sans-serif;font-size:1.3rem;font-weight:900;background:linear-gradient(135deg,#ff0080,#bf00ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.stat-label{font-size:0.68rem;color:rgba(255,255,255,0.42);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+
+/* GAMES */
+.games-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1rem;}
+@media(max-width:700px){.games-grid{grid-template-columns:repeat(2,1fr);}}
+.game-card{background:rgba(191,0,255,0.07);border:1px solid rgba(191,0,255,0.2);border-radius:13px;padding:1.2rem 0.7rem;text-align:center;cursor:pointer;transition:all 0.2s;}
+.game-card:hover{transform:translateY(-4px);border-color:#bf00ff;box-shadow:0 7px 24px rgba(191,0,255,0.28);}
+.game-icon{font-size:1.9rem;display:block;margin-bottom:0.35rem;}
+.game-name{font-family:'Orbitron',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:1px;color:#fff;margin-bottom:0.2rem;}
+.game-desc{font-size:0.72rem;color:rgba(255,255,255,0.45);margin-bottom:0.45rem;}
+.play-btn{background:linear-gradient(135deg,#ff0080,#bf00ff);border:none;color:#fff;padding:0.3rem 0.8rem;border-radius:50px;font-size:0.68rem;font-weight:700;cursor:pointer;text-transform:uppercase;}
+.mini-game-area{background:rgba(0,0,0,0.4);border:1px solid rgba(191,0,255,0.22);border-radius:14px;padding:1rem;margin-top:0.9rem;}
+.game-info{display:flex;justify-content:center;gap:1.5rem;margin-bottom:0.55rem;font-family:'Orbitron',sans-serif;font-size:0.75rem;}
+.sv{color:#bf00ff;font-weight:900;}
+.gctrl{text-align:center;margin-top:0.55rem;}
+.active-game{display:none;}
+.active-game.show{display:block;}
+.close-btn{background:transparent;border:1px solid rgba(255,255,255,0.22);color:rgba(255,255,255,0.65);padding:0.3rem 0.8rem;border-radius:50px;font-size:0.68rem;font-weight:700;cursor:pointer;margin-left:0.4rem;text-transform:uppercase;}
+.close-btn:hover{border-color:#bf00ff;color:#bf00ff;}
+
+/* YOUTUBE */
+.yt-channel-card{background:linear-gradient(135deg,rgba(255,0,0,0.12),rgba(191,0,255,0.12));border:1px solid rgba(255,0,0,0.28);border-radius:14px;padding:0.9rem 1.1rem;margin-bottom:1rem;display:flex;align-items:center;gap:0.9rem;cursor:pointer;transition:all 0.2s;text-decoration:none;}
+.yt-channel-card:hover{border-color:#ff0000;box-shadow:0 5px 20px rgba(255,0,0,0.22);transform:translateY(-2px);}
+.yt-avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#ff0080,#bf00ff);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;border:2px solid rgba(255,0,128,0.45);}
+.yt-ch-info{flex:1;min-width:0;}
+.yt-ch-name{font-family:'Orbitron',sans-serif;font-size:0.92rem;font-weight:900;color:#fff;letter-spacing:1px;}
+.yt-ch-handle{font-size:0.75rem;color:rgba(255,255,255,0.45);margin-bottom:0.25rem;}
+.yt-ch-stats{display:flex;gap:0.9rem;flex-wrap:wrap;}
+.yt-ch-stat{font-size:0.73rem;color:rgba(255,255,255,0.65);font-weight:600;}
+.yt-ch-stat b{color:#ff0080;}
+.sub-btn{background:#ff0000;border:none;color:#fff;padding:0.45rem 1rem;border-radius:6px;font-family:'Rajdhani',sans-serif;font-size:0.8rem;font-weight:700;cursor:pointer;text-transform:uppercase;flex-shrink:0;transition:background 0.18s;}
+.sub-btn:hover{background:#cc0000;}
+
+.refresh-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem;padding:0.4rem 0.7rem;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;}
+.refresh-info{font-size:0.72rem;color:rgba(255,255,255,0.38);font-family:'Orbitron',sans-serif;}
+.refresh-info b{color:#bf00ff;}
+.refresh-now{background:transparent;border:1px solid rgba(191,0,255,0.3);color:#bf00ff;padding:0.25rem 0.7rem;border-radius:6px;font-size:0.68rem;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;text-transform:uppercase;transition:all 0.18s;}
+.refresh-now:hover{background:rgba(191,0,255,0.12);}
+
+.yt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.8rem;}
+.yt-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:11px;overflow:hidden;cursor:pointer;transition:all 0.2s;text-decoration:none;display:block;}
+.yt-card:hover{transform:translateY(-3px);border-color:rgba(255,0,0,0.38);box-shadow:0 5px 18px rgba(255,0,0,0.15);}
+.yt-thumb{aspect-ratio:16/9;position:relative;overflow:hidden;background:#111;}
+.yt-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.yt-thumb-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;}
+.yt-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.42);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.18s;}
+.yt-card:hover .yt-overlay{opacity:1;}
+.yt-play{width:40px;height:40px;background:#ff0000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;}
+.yt-dur{position:absolute;bottom:5px;right:5px;background:rgba(0,0,0,0.8);color:#fff;font-size:0.68rem;font-weight:700;padding:1px 5px;border-radius:3px;font-family:'Rajdhani',sans-serif;}
+.yt-info{padding:0.55rem 0.7rem;}
+.yt-vtitle{font-weight:700;font-size:0.78rem;color:#fff;line-height:1.3;margin-bottom:0.22rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.yt-vmeta{font-size:0.68rem;color:rgba(255,255,255,0.38);}
+.new-badge{position:absolute;top:5px;left:5px;background:#ff0000;color:#fff;font-size:0.58rem;font-weight:700;padding:2px 6px;border-radius:3px;letter-spacing:1px;display:flex;align-items:center;gap:3px;}
+.blink{width:4px;height:4px;background:#fff;border-radius:50%;animation:blink 1s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+
+.loading-state{text-align:center;padding:2rem;color:rgba(255,255,255,0.4);font-family:'Orbitron',sans-serif;font-size:0.8rem;}
+.loading-spinner{width:30px;height:30px;border:3px solid rgba(191,0,255,0.2);border-top-color:#bf00ff;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 0.8rem;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.error-state{text-align:center;padding:1.5rem;color:rgba(255,80,80,0.7);font-size:0.8rem;}
+.api-setup{background:rgba(191,0,255,0.08);border:1px solid rgba(191,0,255,0.25);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1rem;}
+.api-setup p{font-size:0.8rem;color:rgba(255,255,255,0.55);margin-bottom:0.5rem;line-height:1.5;}
+.api-input{background:rgba(0,0,0,0.4);border:1px solid rgba(191,0,255,0.3);color:#fff;padding:0.5rem 0.8rem;border-radius:8px;font-family:'Rajdhani',sans-serif;font-size:0.85rem;width:100%;margin-bottom:0.5rem;outline:none;}
+.api-input:focus{border-color:#bf00ff;}
+.api-btn{background:linear-gradient(135deg,#ff0080,#bf00ff);border:none;color:#fff;padding:0.45rem 1.2rem;border-radius:8px;font-family:'Rajdhani',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;letter-spacing:1px;}
+
+/* canvas responsive wrapper */
+.canvas-wrap{width:100%;overflow:hidden;display:flex;justify-content:center;}
+.canvas-wrap canvas{max-width:100%;height:auto;}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media(max-width:600px){
+  /* NAV */
+  nav{padding:0.5rem 0.8rem;flex-wrap:wrap;gap:0.3rem;}
+  .nav-brand{font-size:0.72rem;letter-spacing:1px;}
+  .nav-links{gap:0.3rem;}
+  .nav-links li a{font-size:0.65rem;padding:0.25rem 0.45rem;letter-spacing:0;}
+
+  /* HERO */
+  .hero{padding:4rem 1rem 1.5rem;}
+  .hero::before{width:200px;height:200px;}
+  .spider-logo{font-size:2.8rem;}
+  .hero-title{font-size:1.2rem;letter-spacing:2px;}
+  .hero-sub{font-size:0.72rem;letter-spacing:2px;}
+  .btn-yt,.btn-game{font-size:0.65rem;padding:0.5rem 1rem;letter-spacing:1px;}
+
+  /* SECTION */
+  .section{padding:1.2rem 0.8rem;}
+  .sec-title{font-size:0.95rem;letter-spacing:2px;}
+
+  /* STATS — 2 columns */
+  .stats-row{grid-template-columns:repeat(2,1fr);gap:0.5rem;}
+  .stat-num{font-size:1.1rem;}
+  .stat-label{font-size:0.6rem;}
+
+  /* GAMES — 2 columns */
+  .games-grid{grid-template-columns:repeat(2,1fr);gap:0.6rem;}
+  .game-card{padding:0.9rem 0.4rem;}
+  .game-icon{font-size:1.5rem;}
+  .game-name{font-size:0.55rem;}
+  .game-desc{font-size:0.65rem;}
+
+  /* GAME CANVASES — scale to fit */
+  #subwayCanvas{width:100% !important;max-width:320px;height:auto !important;}
+  #bikeCanvas{width:100% !important;max-width:320px;height:auto !important;}
+  #climbCanvas{width:100% !important;max-width:280px;height:auto !important;}
+  #bounceCanvas{width:100% !important;max-width:300px;height:auto !important;}
+  #spaceCanvas{width:100% !important;max-width:320px;height:auto !important;}
+  #tetrisCanvas{width:100% !important;max-width:220px;height:auto !important;}
+  #flappyCanvas{width:100% !important;max-width:300px;height:auto !important;}
+  #pongCanvas{width:100% !important;max-width:320px;height:auto !important;}
+  .mini-game-area{padding:0.7rem 0.4rem;}
+  .game-info{font-size:0.65rem;gap:1rem;}
+
+  /* YOUTUBE CHANNEL CARD */
+  .yt-channel-card{flex-wrap:wrap;padding:0.7rem 0.8rem;gap:0.6rem;}
+  .yt-ch-name{font-size:0.78rem;}
+  .yt-ch-handle{font-size:0.65rem;}
+  .yt-ch-stats{gap:0.5rem;}
+  .yt-ch-stat{font-size:0.65rem;}
+  .sub-btn{width:100%;text-align:center;padding:0.5rem;}
+
+  /* YOUTUBE GRID — 1 column */
+  .yt-grid{grid-template-columns:1fr;gap:0.7rem;}
+  .yt-vtitle{font-size:0.82rem;}
+
+  /* REFRESH BAR */
+  .refresh-bar{flex-direction:column;gap:0.4rem;text-align:center;}
+  .refresh-info{font-size:0.65rem;}
+
+  /* FOOTER */
+  footer{padding:0.7rem 1rem;}
+  .ft-brand{font-size:0.75rem;}
+}
+
+footer{background:rgba(0,0,0,0.55);border-top:1px solid rgba(191,0,255,0.12);text-align:center;padding:0.9rem 1.5rem;color:rgba(255,255,255,0.3);font-size:0.72rem;}
+.ft-brand{font-family:'Orbitron',sans-serif;font-size:0.88rem;font-weight:900;background:linear-gradient(90deg,#ff0080,#bf00ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.2rem;}
+</style>
+
+<canvas id="webCanvas"></canvas>
+<div class="wrap">
+
+<nav>
+  <div class="nav-brand">🕷 SPIDER OFFICIAL 001</div>
+  <ul class="nav-links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#games">Games</a></li>
+    <li><a href="#videos">Videos</a></li>
+  </ul>
+</nav>
+
+<div id="home" class="hero">
+  <span class="spider-logo">🕷️</span>
+  <h1 class="hero-title">SPIDER OFFICIAL 001</h1>
+  <p class="hero-sub">Gaming · Entertainment · YouTube</p>
+  <div class="hero-btns">
+    <button class="btn-game" onclick="document.getElementById('games').scrollIntoView({behavior:'smooth'})">⚡ Play Games</button>
+    <a class="btn-yt" href="https://www.youtube.com/@spiderofficial001" target="_blank">🔴 YouTube Channel</a>
+  </div>
+</div>
+
+<hr class="divider">
+
+<div class="section">
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num" id="statSubs">—</div><div class="stat-label">Subscribers</div></div>
+    <div class="stat-card"><div class="stat-num" id="statVids">—</div><div class="stat-label">Videos</div></div>
+    <div class="stat-card" style="display:none"><div class="stat-num" id="statViews">—</div><div class="stat-label">Total Views</div></div>
+    <div class="stat-card"><div class="stat-num">🔴</div><div class="stat-label">Live Channel</div></div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<div id="games" class="section">
+  <div class="sec-title">⚡ MINI GAMES</div>
+  <div class="sec-line"></div>
+  <div class="games-grid">
+    <div class="game-card" onclick="startGame('gkquiz')"><span class="game-icon">🌍</span><div class="game-name">GK Quiz</div><div class="game-desc">Test your GK!</div><button class="play-btn">▶ Play</button></div>
+    <div class="game-card" onclick="startGame('subway')"><span class="game-icon">🏃</span><div class="game-name">Subway Runner</div><div class="game-desc">Dodge & run!</div><button class="play-btn">▶ Play</button></div>
+    <div class="game-card" onclick="startGame('bike')"><span class="game-icon">🏍️</span><div class="game-name">Bike Drive</div><div class="game-desc">Ride the road!</div><button class="play-btn">▶ Play</button></div>
+    <div class="game-card" onclick="startGame('climb')"><span class="game-icon">🧗</span><div class="game-name">Climb</div><div class="game-desc">Reach the top!</div><button class="play-btn">▶ Play</button></div>
+    <div class="game-card" onclick="startGame('bounce')"><span class="game-icon">⚽</span><div class="game-name">Ball Bounce</div><div class="game-desc">Keep it up!</div><button class="play-btn">▶ Play</button></div>
+    <div class="game-card" onclick="startGame('space')"><span class="game-icon">🚀</span><div class="game-name">Space Shooter</div><div class="game-desc">Destroy aliens!</div><button class="play-btn">▶ Play</button></div>
+    <div class="game-card" onclick="startGame('tetris')"><span class="game-icon">🧱</span><div class="game-name">Tetris</div><div class="game-desc">Stack the blocks!</div><button class="play-btn">▶ Play</button></div>
+    <div class="game-card" onclick="startGame('flappy')"><span class="game-icon">🐦</span><div class="game-name">Flappy Spider</div><div class="game-desc">Fly through gaps!</div><button class="play-btn">▶ Play</button></div>
+    <div class="game-card" onclick="startGame('pong')"><span class="game-icon">🏓</span><div class="game-name">Pong Duel</div><div class="game-desc">Beat the AI!</div><button class="play-btn">▶ Play</button></div>
+  </div>
+  <div class="mini-game-area" id="gameArea" style="display:none">
+
+    <!-- GK QUIZ -->
+    <div id="gkquizGame" class="active-game" style="max-width:520px;margin:0 auto;text-align:center">
+      <div class="game-info">
+        <span>Q: <span class="sv" id="gkQN">1</span>/<span id="gkTotal">30</span></span>
+        <span>Score: <span class="sv" id="gkScore">0</span></span>
+        <span>Category: <span class="sv" id="gkCat">—</span></span>
+      </div>
+      <div id="gkBox" style="margin:0.6rem 0"></div>
+      <div id="gkProgress" style="width:100%;height:5px;background:rgba(255,255,255,0.08);border-radius:3px;margin:0.5rem 0">
+        <div id="gkBar" style="height:5px;background:linear-gradient(90deg,#ff0080,#bf00ff);border-radius:3px;width:0%;transition:width 0.3s"></div>
+      </div>
+      <div class="gctrl" style="margin-top:0.5rem">
+        <button class="play-btn" onclick="initGKQuiz()">🔄 Restart</button>
+        <button class="close-btn" onclick="closeGame()">✖ Close</button>
+      </div>
+    </div>
+
+    <!-- SUBWAY RUNNER -->
+    <div id="subwayGame" class="active-game" style="text-align:center">
+      <div class="game-info"><span>Score: <span class="sv" id="subScore">0</span></span><span>Best: <span class="sv" id="subHigh">0</span></span></div>
+      <canvas id="subwayCanvas" width="320" height="300" style="display:block;margin:0 auto;border:2px solid rgba(191,0,255,0.45);border-radius:7px;background:#050015;"></canvas>
+      <div class="gctrl" style="margin-top:0.6rem"><p style="color:rgba(255,255,255,0.38);font-size:0.72rem;margin:0.3rem 0">← → Arrow keys or tap Left/Right to switch lanes</p>
+        <button class="play-btn" onclick="resetSubway()">🔄 Restart</button><button class="close-btn" onclick="closeGame()">✖ Close</button></div>
+    </div>
+
+    <!-- BIKE DRIVE -->
+    <div id="bikeGame" class="active-game" style="text-align:center">
+      <div class="game-info"><span>Score: <span class="sv" id="bikeScore">0</span></span><span>Best: <span class="sv" id="bikeHigh">0</span></span></div>
+      <canvas id="bikeCanvas" width="320" height="300" style="display:block;margin:0 auto;border:2px solid rgba(191,0,255,0.45);border-radius:7px;background:#050015;"></canvas>
+      <div class="gctrl" style="margin-top:0.6rem"><p style="color:rgba(255,255,255,0.38);font-size:0.72rem;margin:0.3rem 0">← → Arrow keys to steer · Avoid cars!</p>
+        <button class="play-btn" onclick="resetBike()">🔄 Restart</button><button class="close-btn" onclick="closeGame()">✖ Close</button></div>
+    </div>
+
+    <!-- CLIMB -->
+    <div id="climbGame" class="active-game" style="text-align:center">
+      <div class="game-info"><span>Height: <span class="sv" id="climbScore">0</span></span><span>Best: <span class="sv" id="climbHigh">0</span></span></div>
+      <canvas id="climbCanvas" width="280" height="320" style="display:block;margin:0 auto;border:2px solid rgba(191,0,255,0.45);border-radius:7px;background:#050015;"></canvas>
+      <div class="gctrl" style="margin-top:0.6rem"><p style="color:rgba(255,255,255,0.38);font-size:0.72rem;margin:0.3rem 0">← → to move · Jump on platforms · Climb higher!</p>
+        <button class="play-btn" onclick="resetClimb()">🔄 Restart</button><button class="close-btn" onclick="closeGame()">✖ Close</button></div>
+    </div>
+
+    <!-- BALL BOUNCE -->
+    <div id="bounceGame" class="active-game" style="text-align:center">
+      <div class="game-info"><span>Score: <span class="sv" id="bounceScore">0</span></span><span>Best: <span class="sv" id="bounceHigh">0</span></span></div>
+      <canvas id="bounceCanvas" width="300" height="300" style="display:block;margin:0 auto;border:2px solid rgba(191,0,255,0.45);border-radius:7px;background:#050015;"></canvas>
+      <div class="gctrl" style="margin-top:0.6rem"><p style="color:rgba(255,255,255,0.38);font-size:0.72rem;margin:0.3rem 0">Mouse / Touch to move paddle · Keep the ball up!</p>
+        <button class="play-btn" onclick="resetBounce()">🔄 Restart</button><button class="close-btn" onclick="closeGame()">✖ Close</button></div>
+    </div>
+
+    <!-- SPACE SHOOTER -->
+    <div id="spaceGame" class="active-game" style="text-align:center">
+      <div class="game-info"><span>Score: <span class="sv" id="spaceScore">0</span></span><span>Lives: <span class="sv" id="spaceLives">3</span></span><span>Best: <span class="sv" id="spaceHigh">0</span></span></div>
+      <canvas id="spaceCanvas" width="320" height="420" style="display:block;margin:0 auto;border:2px solid rgba(0,180,255,0.5);border-radius:7px;background:#000010;"></canvas>
+      <div class="gctrl" style="margin-top:0.6rem"><p style="color:rgba(255,255,255,0.38);font-size:0.72rem;margin:0.3rem 0">← → to move · Space / Tap to shoot!</p>
+        <button class="play-btn" onclick="resetSpace()">🔄 Restart</button><button class="close-btn" onclick="closeGame()">✖ Close</button></div>
+    </div>
+
+    <!-- TETRIS -->
+    <div id="tetrisGame" class="active-game" style="text-align:center">
+      <div class="game-info"><span>Score: <span class="sv" id="tetScore">0</span></span><span>Lines: <span class="sv" id="tetLines">0</span></span><span>Level: <span class="sv" id="tetLevel">1</span></span></div>
+      <canvas id="tetrisCanvas" width="220" height="400" style="display:block;margin:0 auto;border:2px solid rgba(191,0,255,0.45);border-radius:7px;background:#050015;"></canvas>
+      <div class="gctrl" style="margin-top:0.6rem"><p style="color:rgba(255,255,255,0.38);font-size:0.72rem;margin:0.3rem 0">← → Move · ↑ Rotate · ↓ Drop · Tap sides to move</p>
+        <button class="play-btn" onclick="resetTetris()">🔄 Restart</button><button class="close-btn" onclick="closeGame()">✖ Close</button></div>
+    </div>
+
+    <!-- FLAPPY SPIDER -->
+    <div id="flappyGame" class="active-game" style="text-align:center">
+      <div class="game-info"><span>Score: <span class="sv" id="flappyScore">0</span></span><span>Best: <span class="sv" id="flappyHigh">0</span></span></div>
+      <canvas id="flappyCanvas" width="300" height="400" style="display:block;margin:0 auto;border:2px solid rgba(191,0,255,0.45);border-radius:7px;background:#050015;"></canvas>
+      <div class="gctrl" style="margin-top:0.6rem"><p style="color:rgba(255,255,255,0.38);font-size:0.72rem;margin:0.3rem 0">Space / Tap to flap · Avoid the pipes!</p>
+        <button class="play-btn" onclick="resetFlappy()">🔄 Restart</button><button class="close-btn" onclick="closeGame()">✖ Close</button></div>
+    </div>
+
+    <!-- PONG DUEL -->
+    <div id="pongGame" class="active-game" style="text-align:center">
+      <div class="game-info"><span>You: <span class="sv" id="pongPlayer">0</span></span><span>AI: <span class="sv" id="pongAI">0</span></span></div>
+      <canvas id="pongCanvas" width="320" height="380" style="display:block;margin:0 auto;border:2px solid rgba(191,0,255,0.45);border-radius:7px;background:#050015;"></canvas>
+      <div class="gctrl" style="margin-top:0.6rem"><p style="color:rgba(255,255,255,0.38);font-size:0.72rem;margin:0.3rem 0">Mouse / Touch to move your paddle · First to 7 wins!</p>
+        <button class="play-btn" onclick="resetPong()">🔄 Restart</button><button class="close-btn" onclick="closeGame()">✖ Close</button></div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="divider">
+
+<div id="videos" class="section">
+  <div class="sec-title">🔥 MOST VIEWED VIDEOS</div>
+  <div class="sec-line"></div>
+
+  <a class="yt-channel-card" href="https://www.youtube.com/@spiderofficial001" target="_blank">
+    <div class="yt-avatar">🕷️</div>
+    <div class="yt-ch-info">
+      <div class="yt-ch-name">SPIDER OFFICIAL 001</div>
+      <div class="yt-ch-handle">@spiderofficial001</div>
+      <div class="yt-ch-stats">
+        <div class="yt-ch-stat"><b id="chSubs">—</b> Subscribers</div>
+        <div class="yt-ch-stat"><b id="chVids">—</b> Videos</div>
+        <div class="yt-ch-stat" style="display:none"><b id="chViews">—</b> Views</div>
+      </div>
+    </div>
+    <button class="sub-btn" onclick="event.preventDefault();window.open('https://www.youtube.com/@spiderofficial001','_blank')">🔔 Subscribe</button>
+  </a>
+
+  <div class="api-setup" id="apiSetup" style="display:none">
+    <p>🔑 YouTube API Key போடுங்க — Real videos & subscribers automatic-ஆ load ஆகும், every 10 mins refresh ஆகும்!</p>
+    <p style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-bottom:0.5rem">Get free key: console.cloud.google.com → YouTube Data API v3 → Credentials</p>
+    <input class="api-input" id="apiKeyInput" type="text" placeholder="AIzaSy... (YouTube Data API v3 key)">
+    <button class="api-btn" onclick="saveApiKey()">✓ Load My Channel</button>
+  </div>
+
+  <div class="refresh-bar" id="refreshBar" style="display:none">
+    <span class="refresh-info">Auto-refresh: every <b>10 min</b> · Next: <b id="nextRefresh">10:00</b></span>
+    <button class="refresh-now" onclick="fetchYouTubeData(true)">⟳ Refresh Now</button>
+  </div>
+
+  <div id="ytContent">
+    <div class="loading-state" style="display:none" id="ytLoading">
+      <div class="loading-spinner"></div>
+      Loading videos...
+    </div>
+    <div class="yt-grid" id="ytGrid"></div>
+    <div class="error-state" id="ytError" style="display:none"></div>
+  </div>
+
+  <div style="text-align:center;margin-top:1rem">
+    <a class="btn-yt" href="https://www.youtube.com/@spiderofficial001" target="_blank">🔴 Visit YouTube Channel</a>
+  </div>
+</div>
+
+<footer>
+  <div class="ft-brand">🕷 SPIDER OFFICIAL 001</div>
+  <p>Gaming · Entertainment · YouTube</p>
+  <p style="margin-top:0.18rem;font-size:0.65rem">© 2025 Spider Official 001</p>
+</footer>
+</div>
+
+<script>
+const wc=document.getElementById('webCanvas');
+const wx=wc.getContext('2d');
+function resizeW(){wc.width=window.innerWidth;wc.height=window.innerHeight;drawW();}
+function drawW(){
+  wx.clearRect(0,0,wc.width,wc.height);
+  wx.strokeStyle='rgba(191,0,255,0.45)';wx.lineWidth=0.5;
+  [{x:wc.width*.07,y:wc.height*.05},{x:wc.width*.91,y:wc.height*.93}].forEach(o=>{
+    for(let s=0;s<12;s++){const a=(s/12)*Math.PI*2;wx.beginPath();wx.moveTo(o.x,o.y);wx.lineTo(o.x+Math.cos(a)*220,o.y+Math.sin(a)*220);wx.stroke();}
+    for(let r=1;r<=5;r++){const rd=r*38;wx.beginPath();for(let s=0;s<=12;s++){const a=(s/12)*Math.PI*2;s===0?wx.moveTo(o.x+Math.cos(a)*rd,o.y+Math.sin(a)*rd):wx.lineTo(o.x+Math.cos(a)*rd,o.y+Math.sin(a)*rd);}wx.closePath();wx.stroke();}
+  });
+}
+resizeW();window.addEventListener('resize',resizeW);
+
+// Auto-load YouTube data on page start
+window.addEventListener('load', function(){
+  document.getElementById('refreshBar').style.display='flex';
+  fetchYouTubeData(true);
+  startAutoRefresh();
+});
+
+let apiKey='AIzaSyB11j99Wi_OOb0fIjRc1ar5C46CsRBOKOo';
+let refreshTimer=null;
+let refreshCountdown=600;
+let countdownInterval=null;
+const CHANNEL_ID='UCspiderofficial001';
+
+function fmtNum(n){
+  if(!n||isNaN(n))return'—';
+  n=parseInt(n);
+  if(n>=1000000)return(n/1000000).toFixed(1)+'M';
+  if(n>=1000)return(n/1000).toFixed(1)+'K';
+  return n.toString();
+}
+function fmtViews(n){
+  if(!n)return'';
+  n=parseInt(n);
+  if(n>=1000000)return(n/1000000).toFixed(1)+'M views';
+  if(n>=1000)return(n/1000).toFixed(0)+'K views';
+  return n+' views';
+}
+function timeAgo(dateStr){
+  const d=new Date(dateStr),now=new Date();
+  const diff=Math.floor((now-d)/1000);
+  if(diff<60)return'Just now';
+  if(diff<3600)return Math.floor(diff/60)+' min ago';
+  if(diff<86400)return Math.floor(diff/3600)+' hrs ago';
+  if(diff<604800)return Math.floor(diff/86400)+' days ago';
+  if(diff<2592000)return Math.floor(diff/604800)+' weeks ago';
+  return Math.floor(diff/2592000)+' months ago';
+}
+
+function saveApiKey(){
+  const k=document.getElementById('apiKeyInput').value.trim();
+  if(!k||!k.startsWith('AIza')){alert('Valid API key வேணும் — AIza... என்று start ஆகணும்');return;}
+  apiKey=k;
+  document.getElementById('apiSetup').style.display='none';
+  document.getElementById('refreshBar').style.display='flex';
+  fetchYouTubeData(true);
+  startAutoRefresh();
+}
+
+function startAutoRefresh(){
+  if(refreshTimer)clearInterval(refreshTimer);
+  if(countdownInterval)clearInterval(countdownInterval);
+  refreshCountdown=600;
+  countdownInterval=setInterval(()=>{
+    refreshCountdown--;
+    const m=Math.floor(refreshCountdown/60).toString().padStart(2,'0');
+    const s=(refreshCountdown%60).toString().padStart(2,'0');
+    const el=document.getElementById('nextRefresh');
+    if(el)el.textContent=m+':'+s;
+    if(refreshCountdown<=0){refreshCountdown=600;fetchYouTubeData(false);}
+  },1000);
+}
+
+async function fetchYouTubeData(showLoading){
+  if(!apiKey)return;
+  if(showLoading){
+    document.getElementById('ytLoading').style.display='block';
+    document.getElementById('ytGrid').innerHTML='';
+    document.getElementById('ytError').style.display='none';
+  }
+  try{
+    const chRes=await fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&forHandle=spiderofficial001&key=${apiKey}`);
+    const chData=await chRes.json();
+    if(chData.error){throw new Error(chData.error.message);}
+    if(!chData.items||chData.items.length===0){throw new Error('Channel not found');}
+    const ch=chData.items[0];
+    const stats=ch.statistics;
+    const subs=fmtNum(stats.subscriberCount);
+    const vids=fmtNum(stats.videoCount);
+    const views=fmtNum(stats.viewCount);
+    ['statSubs','chSubs'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=subs;});
+    ['statVids','chVids'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=vids;});
+    ['statViews','chViews'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=views;});
+
+    const searchRes=await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${ch.id}&order=viewCount&maxResults=3&type=video&key=${apiKey}`);
+    const searchData=await searchRes.json();
+    if(searchData.error)throw new Error(searchData.error.message);
+
+    const videoIds=searchData.items.map(i=>i.id.videoId).join(',');
+    const vidRes=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics,contentDetails,snippet&id=${videoIds}&key=${apiKey}`);
+    const vidData=await vidRes.json();
+
+    document.getElementById('ytLoading').style.display='none';
+    // Sort by viewCount highest first
+    const sorted=(vidData.items||[]).sort((a,b)=>parseInt(b.statistics?.viewCount||0)-parseInt(a.statistics?.viewCount||0)).slice(0,3);
+    renderVideos(sorted);
+  }catch(err){
+    document.getElementById('ytLoading').style.display='none';
+    document.getElementById('ytError').style.display='block';
+    document.getElementById('ytError').textContent='⚠️ Error: '+err.message+'. API key-ஐ check பண்ணுங்க.';
+  }
+}
+
+function parseDuration(dur){
+  const m=dur.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if(!m)return'';
+  const h=parseInt(m[1]||0),mn=parseInt(m[2]||0),s=parseInt(m[3]||0);
+  if(h>0)return h+':'+(mn<10?'0':'')+mn+':'+(s<10?'0':'')+s;
+  return mn+':'+(s<10?'0':'')+s;
+}
+
+function renderVideos(videos){
+  const grid=document.getElementById('ytGrid');
+  grid.innerHTML='';
+  if(!videos.length){grid.innerHTML='<div class="error-state">No videos found</div>';return;}
+  videos.forEach((v,i)=>{
+    const vid=v.id;
+    const sn=v.snippet||{};
+    const st=v.statistics||{};
+    const cd=v.contentDetails||{};
+    const title=sn.title||'Video';
+    const thumb=sn.thumbnails?.medium?.url||sn.thumbnails?.default?.url||'';
+    const views=fmtViews(st.viewCount);
+    const ago=timeAgo(sn.publishedAt);
+    const dur=parseDuration(cd.duration||'');
+    const url='https://www.youtube.com/watch?v='+vid;
+    grid.innerHTML+=`<a class="yt-card" href="${url}" target="_blank">
+      <div class="yt-thumb">
+        ${thumb?`<img src="${thumb}" alt="${title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:''}
+        <div class="yt-thumb-fallback" style="${thumb?'display:none':''}">🎬</div>
+        ${i===0?'<div class="new-badge" style="background:linear-gradient(135deg,#ff8c00,#ff0080)"><span class="blink"></span>🔥 #1 VIEWS</div>':i===1?'<div class="new-badge" style="background:linear-gradient(135deg,#888,#555)">🥈 #2</div>':i===2?'<div class="new-badge" style="background:linear-gradient(135deg,#cd7f32,#8b4513)">🥉 #3</div>':''}
+        ${dur?`<div class="yt-dur">${dur}</div>`:''}
+        <div class="yt-overlay"><div class="yt-play">▶</div></div>
+      </div>
+      <div class="yt-info">
+        <div class="yt-vtitle">${title}</div>
+        <div class="yt-vmeta">${views}${views&&ago?' · ':''}${ago}</div>
+      </div>
+    </a>`;
+  });
+}
+
+let cur=null;
+function startGame(n){
+  document.getElementById('gameArea').style.display='block';
+  document.getElementById('gameArea').scrollIntoView({behavior:'smooth'});
+  ['gkquizGame','subwayGame','bikeGame','climbGame','bounceGame','spaceGame','tetrisGame','flappyGame','pongGame'].forEach(id=>document.getElementById(id).classList.remove('show'));
+  document.getElementById(n+'Game').classList.add('show');
+  cur=n;
+  if(n==='gkquiz')initGKQuiz();
+  if(n==='subway')resetSubway();
+  if(n==='bike')resetBike();
+  if(n==='climb')resetClimb();
+  if(n==='bounce')resetBounce();
+  if(n==='space')resetSpace();
+  if(n==='tetris')resetTetris();
+  if(n==='flappy')resetFlappy();
+  if(n==='pong')resetPong();
+}
+function closeGame(){document.getElementById('gameArea').style.display='none';subRunning=false;bikeRunning=false;climbRunning=false;bounceRunning=false;spaceRunning=false;tetRunning=false;flappyRunning=false;pongRunning=false;cur=null;}
+
+// ========== GK QUIZ ==========
+const gkData=[
+  // Science & Nature
+  {cat:'🔬 Science',q:'What is the chemical symbol for Gold?',a:['Au','Ag','Fe','Go'],c:0},
+  {cat:'🔬 Science',q:'How many bones are in the adult human body?',a:['196','206','216','226'],c:1},
+  {cat:'🔬 Science',q:'What planet is known as the Red Planet?',a:['Venus','Jupiter','Mars','Saturn'],c:2},
+  {cat:'🔬 Science',q:'What is the speed of light (approx)?',a:['3×10⁸ m/s','3×10⁶ m/s','3×10⁵ m/s','3×10⁴ m/s'],c:0},
+  {cat:'🔬 Science',q:'Which gas do plants absorb from the atmosphere?',a:['Oxygen','Nitrogen','Carbon Dioxide','Hydrogen'],c:2},
+  {cat:'🔬 Science',q:'What is the powerhouse of the cell?',a:['Nucleus','Ribosome','Mitochondria','Vacuole'],c:2},
+  {cat:'🔬 Science',q:'Which planet has the most moons?',a:['Jupiter','Saturn','Uranus','Neptune'],c:1},
+  {cat:'🔬 Science',q:'What is H₂O commonly known as?',a:['Hydrogen','Water','Salt','Acid'],c:1},
+  {cat:'🔬 Science',q:'The study of earthquakes is called?',a:['Geology','Seismology','Vulcanology','Meteorology'],c:1},
+  {cat:'🔬 Science',q:'What is the largest organ in the human body?',a:['Liver','Brain','Lungs','Skin'],c:3},
+  // Geography
+  {cat:'🌍 Geography',q:'What is the capital of Australia?',a:['Sydney','Melbourne','Canberra','Perth'],c:2},
+  {cat:'🌍 Geography',q:'Which is the longest river in the world?',a:['Amazon','Nile','Yangtze','Mississippi'],c:1},
+  {cat:'🌍 Geography',q:'Which country has the most natural lakes?',a:['USA','Russia','Canada','Brazil'],c:2},
+  {cat:'🌍 Geography',q:'What is the smallest country in the world?',a:['Monaco','San Marino','Vatican City','Liechtenstein'],c:2},
+  {cat:'🌍 Geography',q:'Mount Everest is located in which mountain range?',a:['Andes','Alps','Himalayas','Rockies'],c:2},
+  {cat:'🌍 Geography',q:'Which ocean is the largest?',a:['Atlantic','Indian','Arctic','Pacific'],c:3},
+  {cat:'🌍 Geography',q:'What is the capital of Japan?',a:['Osaka','Kyoto','Tokyo','Hiroshima'],c:2},
+  {cat:'🌍 Geography',q:'The Sahara Desert is located on which continent?',a:['Asia','Africa','Australia','South America'],c:1},
+  {cat:'🌍 Geography',q:'Which country is known as the Land of the Rising Sun?',a:['China','Japan','South Korea','Thailand'],c:1},
+  {cat:'🌍 Geography',q:'What is the capital of Brazil?',a:['Rio de Janeiro','São Paulo','Brasília','Salvador'],c:2},
+  // History
+  {cat:'📜 History',q:'In which year did World War II end?',a:['1943','1944','1945','1946'],c:2},
+  {cat:'📜 History',q:'Who was the first President of the United States?',a:['Abraham Lincoln','Thomas Jefferson','George Washington','John Adams'],c:2},
+  {cat:'📜 History',q:'The Great Wall of China was primarily built during which dynasty?',a:['Han','Tang','Ming','Qing'],c:2},
+  {cat:'📜 History',q:'Who invented the telephone?',a:['Thomas Edison','Nikola Tesla','Alexander Graham Bell','Guglielmo Marconi'],c:2},
+  {cat:'📜 History',q:'In which year did India gain independence?',a:['1945','1946','1947','1948'],c:2},
+  {cat:'📜 History',q:'Who painted the Mona Lisa?',a:['Michelangelo','Raphael','Leonardo da Vinci','Donatello'],c:2},
+  {cat:'📜 History',q:'The French Revolution began in which year?',a:['1776','1789','1799','1804'],c:1},
+  {cat:'📜 History',q:'Who discovered America in 1492?',a:['Vasco da Gama','Ferdinand Magellan','Christopher Columbus','Amerigo Vespucci'],c:2},
+  {cat:'📜 History',q:'Which ancient wonder was located in Alexandria?',a:['Colossus of Rhodes','Lighthouse of Alexandria','Hanging Gardens','Temple of Artemis'],c:1},
+  {cat:'📜 History',q:'Who was the first human to walk on the Moon?',a:['Buzz Aldrin','Yuri Gagarin','Neil Armstrong','Michael Collins'],c:2},
+  // Sports
+  {cat:'⚽ Sports',q:'How many players are in a standard football (soccer) team?',a:['9','10','11','12'],c:2},
+  {cat:'⚽ Sports',q:'Which country won the first FIFA World Cup in 1930?',a:['Brazil','Argentina','Uruguay','Italy'],c:2},
+  {cat:'⚽ Sports',q:'In which sport is the term "love" used for zero?',a:['Badminton','Squash','Table Tennis','Tennis'],c:3},
+  {cat:'⚽ Sports',q:'The Olympic Games originated in which country?',a:['Italy','Greece','Egypt','Rome'],c:1},
+  {cat:'⚽ Sports',q:'How many rings are on the Olympic flag?',a:['4','5','6','7'],c:1},
+  // Technology
+  {cat:'💻 Technology',q:'What does CPU stand for?',a:['Central Processing Unit','Computer Personal Unit','Core Processing Unit','Central Program Unit'],c:0},
+  {cat:'💻 Technology',q:'Who co-founded Apple Inc.?',a:['Bill Gates','Elon Musk','Steve Jobs','Mark Zuckerberg'],c:2},
+  {cat:'💻 Technology',q:'What does "www" stand for in a website browser?',a:['World Wide Web','Wide World Web','World Web Wide','Web World Wide'],c:0},
+  {cat:'💻 Technology',q:'Which company created the Android operating system?',a:['Apple','Microsoft','Google','Samsung'],c:2},
+  {cat:'💻 Technology',q:'What does RAM stand for?',a:['Read Access Memory','Random Access Memory','Run Active Memory','Random Array Memory'],c:1},
+  // General Knowledge
+  {cat:'🧠 General',q:'How many sides does a hexagon have?',a:['5','6','7','8'],c:1},
+  {cat:'🧠 General',q:'What is the largest mammal in the world?',a:['African Elephant','Blue Whale','Giraffe','Hippopotamus'],c:1},
+  {cat:'🧠 General',q:'Which language has the most native speakers in the world?',a:['English','Spanish','Hindi','Mandarin Chinese'],c:3},
+  {cat:'🧠 General',q:'How many continents are there on Earth?',a:['5','6','7','8'],c:2},
+  {cat:'🧠 General',q:'What is the hardest natural substance on Earth?',a:['Gold','Iron','Diamond','Platinum'],c:2},
+  {cat:'🧠 General',q:'Which instrument has 88 keys?',a:['Organ','Piano','Harpsichord','Accordion'],c:1},
+  {cat:'🧠 General',q:'What is the square root of 144?',a:['10','11','12','13'],c:2},
+  {cat:'🧠 General',q:'Which gas makes up most of Earth\'s atmosphere?',a:['Oxygen','Carbon Dioxide','Nitrogen','Argon'],c:2},
+  {cat:'🧠 General',q:'How many colors are in a rainbow?',a:['5','6','7','8'],c:2},
+  {cat:'🧠 General',q:'What is the national animal of India?',a:['Lion','Elephant','Tiger','Leopard'],c:2},
+];
+
+let gkIdx=0,gkScore5=0,gkShuffled=[];
+function shuffleGK(){gkShuffled=[...gkData].sort(()=>Math.random()-0.5);}
+function initGKQuiz(){
+  shuffleGK();gkIdx=0;gkScore5=0;
+  document.getElementById('gkScore').textContent='0';
+  document.getElementById('gkTotal').textContent=gkShuffled.length;
+  document.getElementById('gkBar').style.width='0%';
+  showGKQ();
+}
+function showGKQ(){
+  const total=gkShuffled.length;
+  document.getElementById('gkBar').style.width=((gkIdx/total)*100)+'%';
+  if(gkIdx>=total){
+    const pct=Math.round((gkScore5/total)*100);
+    const grade=pct>=90?'🏆 Genius!':pct>=70?'⚡ Excellent!':pct>=50?'👍 Good!':pct>=30?'📚 Keep studying!':'🕷 Try again!';
+    document.getElementById('gkBox').innerHTML=`
+      <div style="padding:1.2rem 0.5rem">
+        <div style="font-size:3rem;margin-bottom:0.5rem">${pct>=90?'🏆':pct>=70?'⚡':pct>=50?'🎯':'📚'}</div>
+        <div style="font-family:'Orbitron',sans-serif;font-size:1.3rem;color:#bf00ff;margin-bottom:0.3rem">${grade}</div>
+        <div style="font-family:'Orbitron',sans-serif;font-size:1rem;color:#fff;margin-bottom:0.2rem">${gkScore5} / ${total} correct</div>
+        <div style="font-size:0.8rem;color:rgba(255,255,255,0.45)">${pct}% accuracy</div>
+      </div>`;
+    document.getElementById('gkQN').textContent=total;
+    return;
+  }
+  const q=gkShuffled[gkIdx];
+  document.getElementById('gkQN').textContent=gkIdx+1;
+  document.getElementById('gkCat').textContent=q.cat;
+  document.getElementById('gkBox').innerHTML=`
+    <div style="background:rgba(191,0,255,0.07);border:1px solid rgba(191,0,255,0.2);border-radius:11px;padding:0.9rem 0.8rem;margin-bottom:0.6rem">
+      <div style="font-size:0.78rem;color:rgba(255,255,255,0.45);font-weight:600;margin-bottom:0.35rem;letter-spacing:1px">${q.cat}</div>
+      <div style="font-size:0.95rem;font-weight:700;line-height:1.5;color:#fff">${q.q}</div>
+    </div>
+    <div style="display:grid;gap:0.4rem">
+      ${q.a.map((ans,i)=>`<button id="gkBtn${i}" onclick="ansGK(${i})" style="background:rgba(255,255,255,0.05);border:1.5px solid rgba(191,0,255,0.25);color:#fff;padding:0.6rem 0.9rem;border-radius:9px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:0.88rem;font-weight:600;transition:all 0.15s;text-align:left;width:100%" onmouseover="this.style.background='rgba(191,0,255,0.15)';this.style.borderColor='#bf00ff'" onmouseout="if(!this.disabled)this.style.background='rgba(255,255,255,0.05)';if(!this.disabled)this.style.borderColor='rgba(191,0,255,0.25)'">${String.fromCharCode(65+i)}. ${ans}</button>`).join('')}
+    </div>`;
+}
+function ansGK(i){
+  const q=gkShuffled[gkIdx];
+  const btns=document.querySelectorAll('[id^="gkBtn"]');
+  btns.forEach(b=>b.disabled=true);
+  btns[q.c].style.background='rgba(0,200,80,0.25)';btns[q.c].style.borderColor='#00c850';
+  if(i===q.c){gkScore5++;document.getElementById('gkScore').textContent=gkScore5;btns[i].style.color='#00ff88';}
+  else{btns[i].style.background='rgba(255,50,50,0.22)';btns[i].style.borderColor='#ff4444';btns[i].style.color='#ff6666';}
+  gkIdx++;
+  setTimeout(showGKQ,900);
+}
+
+// ========== SUBWAY RUNNER ==========
+const subC=document.getElementById('subwayCanvas');
+const subX=subC.getContext('2d');
+let subRunning=false,subScore2=0,subHi=0,subLane=1,subObstacles=[],subFrame=0,subSpeed=3;
+const LANES=[60,160,260];
+function resetSubway(){
+  subRunning=true;subScore2=0;subLane=1;subObstacles=[];subFrame=0;subSpeed=3;
+  document.getElementById('subScore').textContent='0';
+  subLoop();
+}
+function subLoop(){
+  if(cur!=='subway')return;
+  subX.fillStyle='#050015';subX.fillRect(0,0,320,300);
+  // road lines
+  subX.strokeStyle='rgba(255,255,255,0.12)';subX.lineWidth=2;
+  [110,210].forEach(x=>{subX.beginPath();subX.setLineDash([20,15]);subX.moveTo(x,0);subX.lineTo(x,300);subX.stroke();subX.setLineDash([]);});
+  // player
+  subX.font='2rem serif';subX.textAlign='center';
+  subX.fillText('🏃',LANES[subLane],260);
+  // obstacles
+  subFrame++;
+  if(subFrame%55===0){subObstacles.push({lane:Math.floor(Math.random()*3),y:-30});}
+  subObstacles.forEach(o=>{o.y+=subSpeed;subX.fillText('🚧',LANES[o.lane],o.y);});
+  subObstacles=subObstacles.filter(o=>o.y<310);
+  // collision
+  const hit=subObstacles.some(o=>o.lane===subLane&&o.y>220&&o.y<280);
+  if(hit){subRunning=false;subX.fillStyle='rgba(191,0,255,0.85)';subX.font='bold 15px Orbitron,sans-serif';subX.fillText('GAME OVER',160,150);
+    if(subScore2>subHi){subHi=subScore2;document.getElementById('subHigh').textContent=subHi;}return;}
+  if(subRunning){subScore2++;if(subFrame%10===0){document.getElementById('subScore').textContent=subScore2;}
+    if(subScore2%200===0)subSpeed+=0.3;
+    requestAnimationFrame(subLoop);}
+}
+document.addEventListener('keydown',e=>{
+  if(cur!=='subway')return;
+  if(e.key==='ArrowLeft'&&subLane>0)subLane--;
+  if(e.key==='ArrowRight'&&subLane<2)subLane++;
+});
+subC.addEventListener('click',e=>{
+  const r=subC.getBoundingClientRect();const x=e.clientX-r.left;
+  if(x<subC.width/2&&subLane>0)subLane--;
+  else if(x>=subC.width/2&&subLane<2)subLane++;
+});
+
+// ========== BIKE DRIVE ==========
+const bkC=document.getElementById('bikeCanvas');
+const bkX=bkC.getContext('2d');
+let bikeRunning=false,bikeScore2=0,bikeHi=0,bikeX2=160,bikeCars=[],bikeFrame=0,bikeSpeed=2.5;
+function resetBike(){
+  bikeRunning=true;bikeScore2=0;bikeX2=160;bikeCars=[];bikeFrame=0;bikeSpeed=2.5;
+  document.getElementById('bikeScore').textContent='0';
+  bikeLoop();
+}
+function bikeLoop(){
+  if(cur!=='bike')return;
+  bkX.fillStyle='#0a0a1a';bkX.fillRect(0,0,320,300);
+  // road
+  bkX.fillStyle='#1a1a2e';bkX.fillRect(60,0,200,300);
+  bkX.strokeStyle='rgba(255,255,0,0.18)';bkX.lineWidth=2;bkX.setLineDash([20,15]);
+  bkX.beginPath();bkX.moveTo(160,0);bkX.lineTo(160,300);bkX.stroke();bkX.setLineDash([]);
+  bkX.strokeStyle='rgba(255,255,255,0.2)';bkX.lineWidth=3;bkX.setLineDash([]);
+  bkX.beginPath();bkX.moveTo(60,0);bkX.lineTo(60,300);bkX.stroke();
+  bkX.beginPath();bkX.moveTo(260,0);bkX.lineTo(260,300);bkX.stroke();
+  // bike
+  bkX.font='2rem serif';bkX.textAlign='center';bkX.fillText('🏍️',bikeX2,265);
+  // cars
+  bikeFrame++;
+  if(bikeFrame%60===0){const lx=[90,160,230];bikeCars.push({x:lx[Math.floor(Math.random()*3)],y:-40,col:['🚗','🚕','🚙'][Math.floor(Math.random()*3)]});}
+  bikeCars.forEach(c=>{c.y+=bikeSpeed;bkX.fillText(c.col,c.x,c.y);});
+  bikeCars=bikeCars.filter(c=>c.y<320);
+  const hit=bikeCars.some(c=>Math.abs(c.x-bikeX2)<28&&c.y>230&&c.y<285);
+  if(hit){bikeRunning=false;bkX.fillStyle='rgba(191,0,255,0.85)';bkX.font='bold 15px Orbitron,sans-serif';bkX.fillText('GAME OVER',160,150);
+    if(bikeScore2>bikeHi){bikeHi=bikeScore2;document.getElementById('bikeHigh').textContent=bikeHi;}return;}
+  if(bikeRunning){bikeScore2++;if(bikeFrame%10===0)document.getElementById('bikeScore').textContent=bikeScore2;
+    if(bikeScore2%300===0)bikeSpeed+=0.3;requestAnimationFrame(bikeLoop);}
+}
+document.addEventListener('keydown',e=>{
+  if(cur!=='bike')return;
+  if(e.key==='ArrowLeft')bikeX2=Math.max(75,bikeX2-35);
+  if(e.key==='ArrowRight')bikeX2=Math.min(245,bikeX2+35);
+});
+bkC.addEventListener('click',e=>{
+  const r=bkC.getBoundingClientRect();const x=e.clientX-r.left;
+  if(x<bkC.width/2)bikeX2=Math.max(75,bikeX2-35);
+  else bikeX2=Math.min(245,bikeX2+35);
+});
+
+// ========== CLIMB ==========
+const clC=document.getElementById('climbCanvas');
+const clX=clC.getContext('2d');
+let climbRunning=false,climbPx=140,climbPy=270,climbVy=0,climbScore3=0,climbHi=0,climbPlats=[],climbDir=0,climbCamY=0;
+function resetClimb(){
+  climbRunning=true;climbPx=140;climbPy=270;climbVy=0;climbScore3=0;climbDir=0;climbCamY=0;
+  climbPlats=[{x:100,y:290,w:80}];
+  for(let i=0;i<8;i++){climbPlats.push({x:Math.random()*180+10,y:290-i*55-60,w:60+Math.random()*40});}
+  document.getElementById('climbScore').textContent='0';
+  climbLoop();
+}
+function climbLoop(){
+  if(cur!=='climb')return;
+  clX.fillStyle='#050015';clX.fillRect(0,0,280,320);
+  climbVy+=0.4;climbPy+=climbVy;climbPx+=climbDir*3;
+  climbPx=Math.max(10,Math.min(270,climbPx));
+  // platform collision
+  climbPlats.forEach(p=>{
+    const ry=p.y-climbCamY;
+    if(climbVy>0&&climbPy-climbCamY>=ry-8&&climbPy-climbCamY<=ry+5&&climbPx>=p.x-5&&climbPx<=p.x+p.w+5){
+      climbVy=-9;
+    }
+  });
+  // camera scroll up
+  if(climbPy-climbCamY<160){climbCamY-=2;climbScore3+=2;document.getElementById('climbScore').textContent=climbScore3;
+    if(climbScore3>climbHi){climbHi=climbScore3;document.getElementById('climbHigh').textContent=climbHi;}
+    // add new platform at top
+    const top=climbPlats.reduce((m,p)=>Math.min(m,p.y),Infinity);
+    if(top-climbCamY>-50){climbPlats.push({x:Math.random()*180+10,y:top-60,w:60+Math.random()*40});}
+    climbPlats=climbPlats.filter(p=>p.y-climbCamY<360);
+  }
+  // draw platforms
+  climbPlats.forEach(p=>{
+    const ry=p.y-climbCamY;
+    clX.fillStyle='rgba(191,0,255,0.7)';clX.fillRect(p.x,ry,p.w,8);
+  });
+  // player
+  clX.font='1.6rem serif';clX.textAlign='center';clX.fillText('🧗',climbPx,climbPy-climbCamY);
+  // fall = game over
+  if(climbPy-climbCamY>340){climbRunning=false;
+    clX.fillStyle='rgba(191,0,255,0.85)';clX.font='bold 14px Orbitron,sans-serif';clX.textAlign='center';
+    clX.fillText('GAME OVER',140,160);return;}
+  if(climbRunning)requestAnimationFrame(climbLoop);
+}
+document.addEventListener('keydown',e=>{if(cur!=='climb'){return;}if(e.key==='ArrowLeft')climbDir=-1;if(e.key==='ArrowRight')climbDir=1;});
+document.addEventListener('keyup',e=>{if(cur!=='climb')return;if(e.key==='ArrowLeft'||e.key==='ArrowRight')climbDir=0;});
+clC.addEventListener('click',e=>{const r=clC.getBoundingClientRect();climbDir=e.clientX-r.left<140?-1:1;setTimeout(()=>climbDir=0,150);});
+
+// ========== SPACE SHOOTER ==========
+const spC=document.getElementById('spaceCanvas');
+const spX=spC.getContext('2d');
+let spaceRunning=false,spaceScore3=0,spaceHi3=0,spaceLives=3,spShip={x:160,y:380},spBullets=[],spEnemies=[],spParticles=[],spEFrame=0,spESpeed=1.2,spShooting=false,spShootTimer=0;
+const spStars=Array.from({length:60},()=>({x:Math.random()*320,y:Math.random()*420,s:Math.random()*1.5+0.3,sp:Math.random()*1.5+0.5}));
+function resetSpace(){
+  spaceRunning=true;spaceScore3=0;spaceLives=3;spShip={x:160,y:380};spBullets=[];spEnemies=[];spParticles=[];spEFrame=0;spESpeed=1.2;spShooting=false;
+  document.getElementById('spaceScore').textContent='0';document.getElementById('spaceLives').textContent='3';
+  spLoop();
+}
+function spSpawnEnemy(){
+  const types=[
+    {emoji:'👾',w:28,h:20,hp:1,pts:10,sp:spESpeed},
+    {emoji:'🛸',w:32,h:22,hp:2,pts:25,sp:spESpeed*0.7},
+    {emoji:'☄️',w:22,h:22,hp:1,pts:15,sp:spESpeed*1.5},
+  ];
+  const t=types[Math.floor(Math.random()*types.length)];
+  spEnemies.push({x:20+Math.random()*280,y:-30,...t,vy:t.sp,vx:(Math.random()-0.5)*1.2});
+}
+function spExplode(x,y,color){
+  for(let i=0;i<8;i++){spParticles.push({x,y,vx:(Math.random()-0.5)*4,vy:(Math.random()-0.5)*4,life:1,color});}
+}
+function spLoop(){
+  if(cur!=='space')return;
+  const W=320,H=420;
+  // background
+  spX.fillStyle='#000010';spX.fillRect(0,0,W,H);
+  // stars
+  spStars.forEach(s=>{
+    s.y+=s.sp;if(s.y>H)s.y=0;
+    spX.fillStyle=`rgba(255,255,255,${0.3+s.s*0.4})`;
+    spX.beginPath();spX.arc(s.x,s.y,s.s,0,Math.PI*2);spX.fill();
+  });
+  // particles
+  spParticles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.life-=0.05;spX.globalAlpha=p.life;spX.fillStyle=p.color;spX.beginPath();spX.arc(p.x,p.y,3,0,Math.PI*2);spX.fill();});
+  spX.globalAlpha=1;
+  spParticles=spParticles.filter(p=>p.life>0);
+  // spawn
+  spEFrame++;
+  const interval=Math.max(45,90-Math.floor(spaceScore3/50)*3);
+  if(spEFrame%interval===0)spSpawnEnemy();
+  if(spESpeed<4&&spEFrame%500===0)spESpeed+=0.15;
+  // auto shoot
+  spShootTimer++;
+  if(spShootTimer%18===0)spBullets.push({x:spShip.x,y:spShip.y-20});
+  // bullets
+  spBullets.forEach(b=>{b.y-=8;
+    spX.fillStyle='#00ffff';spX.shadowColor='#00ffff';spX.shadowBlur=8;
+    spX.fillRect(b.x-2,b.y,4,12);spX.shadowBlur=0;
+  });
+  spBullets=spBullets.filter(b=>b.y>-10);
+  // enemies
+  spEnemies.forEach(e=>{e.y+=e.vy;e.x+=e.vx;
+    if(e.x<15||e.x>305)e.vx*=-1;
+    spX.font='1.4rem serif';spX.textAlign='center';spX.fillText(e.emoji,e.x,e.y);
+    // hp bar
+    if(e.hp>1){spX.fillStyle='rgba(255,0,0,0.5)';spX.fillRect(e.x-12,e.y+5,24,3);spX.fillStyle='#0f0';spX.fillRect(e.x-12,e.y+5,(e.hp/2)*24,3);}
+  });
+  // bullet-enemy collision
+  spBullets.forEach((b,bi)=>{
+    spEnemies.forEach((e,ei)=>{
+      if(Math.abs(b.x-e.x)<16&&Math.abs(b.y-e.y)<16){
+        e.hp--;spBullets.splice(bi,1);
+        if(e.hp<=0){spExplode(e.x,e.y,'#ff8800');spEnemies.splice(ei,1);spaceScore3+=e.pts;document.getElementById('spaceScore').textContent=spaceScore3;if(spaceScore3>spaceHi3){spaceHi3=spaceScore3;document.getElementById('spaceHigh').textContent=spaceHi3;}}
+      }
+    });
+  });
+  // enemy-ship collision
+  spEnemies.forEach((e,ei)=>{
+    if(e.y>350&&Math.abs(e.x-spShip.x)<22){spExplode(e.x,e.y,'#ff0000');spEnemies.splice(ei,1);spaceLives--;document.getElementById('spaceLives').textContent=spaceLives;
+      if(spaceLives<=0){spaceRunning=false;spX.fillStyle='rgba(0,0,16,0.8)';spX.fillRect(0,0,W,H);spX.fillStyle='#ff0080';spX.font='bold 18px Orbitron,sans-serif';spX.textAlign='center';spX.fillText('GAME OVER',160,200);spX.font='13px Orbitron,sans-serif';spX.fillStyle='#fff';spX.fillText('Score: '+spaceScore3,160,230);return;}}
+  });
+  spEnemies=spEnemies.filter(e=>e.y<440);
+  // ship
+  spX.font='2rem serif';spX.textAlign='center';spX.fillText('🚀',spShip.x,spShip.y);
+  // lives
+  for(let i=0;i<spaceLives;i++){spX.font='0.9rem serif';spX.fillText('❤️',15+i*22,18);}
+  if(spaceRunning)requestAnimationFrame(spLoop);
+}
+document.addEventListener('keydown',e=>{if(cur!=='space')return;if(e.key==='ArrowLeft')spShip.x=Math.max(20,spShip.x-20);if(e.key==='ArrowRight')spShip.x=Math.min(300,spShip.x+20);});
+document.getElementById('spaceCanvas').addEventListener('click',e=>{const r=spC.getBoundingClientRect();const x=e.clientX-r.left;if(x<160)spShip.x=Math.max(20,spShip.x-25);else spShip.x=Math.min(300,spShip.x+25);});
+document.getElementById('spaceCanvas').addEventListener('touchmove',e=>{e.preventDefault();const r=spC.getBoundingClientRect();spShip.x=Math.max(20,Math.min(300,e.touches[0].clientX-r.left));},{passive:false});
+
+// ========== TETRIS ==========
+const tetC=document.getElementById('tetrisCanvas');
+const tetX=tetC.getContext('2d');
+const TW=11,TH=20,TS=20;
+let tetRunning=false,tetBoard,tetPiece,tetScore4=0,tetLines4=0,tetLevel4=1,tetHi4=0,tetInterval=null;
+const PIECES=[
+  {shape:[[1,1,1,1]],color:'#00ffff'},
+  {shape:[[1,1],[1,1]],color:'#ffff00'},
+  {shape:[[0,1,0],[1,1,1]],color:'#aa00ff'},
+  {shape:[[1,0,0],[1,1,1]],color:'#ff8800'},
+  {shape:[[0,0,1],[1,1,1]],color:'#0040ff'},
+  {shape:[[1,1,0],[0,1,1]],color:'#00ff44'},
+  {shape:[[0,1,1],[1,1,0]],color:'#ff0040'},
+];
+function tetNewBoard(){return Array.from({length:TH},()=>Array(TW).fill(0));}
+function tetRandPiece(){const p=PIECES[Math.floor(Math.random()*PIECES.length)];return{shape:p.shape.map(r=>[...r]),color:p.color,x:Math.floor(TW/2)-Math.floor(p.shape[0].length/2),y:0};}
+function tetDraw(){
+  tetX.fillStyle='#050015';tetX.fillRect(0,0,220,400);
+  // grid
+  tetX.strokeStyle='rgba(191,0,255,0.08)';tetX.lineWidth=0.5;
+  for(let r=0;r<TH;r++)for(let c=0;c<TW;c++){tetX.strokeRect(c*TS,r*TS,TS,TS);}
+  // board
+  tetBoard.forEach((row,r)=>row.forEach((v,c)=>{
+    if(v){tetX.fillStyle=v;tetX.shadowColor=v;tetX.shadowBlur=4;tetX.fillRect(c*TS+1,r*TS+1,TS-2,TS-2);tetX.shadowBlur=0;
+      tetX.strokeStyle='rgba(255,255,255,0.25)';tetX.strokeRect(c*TS+1,r*TS+1,TS-2,TS-2);}
+  }));
+  // active piece
+  if(tetPiece){tetPiece.shape.forEach((row,r)=>row.forEach((v,c)=>{
+    if(v){tetX.fillStyle=tetPiece.color;tetX.shadowColor=tetPiece.color;tetX.shadowBlur=6;
+      tetX.fillRect((tetPiece.x+c)*TS+1,(tetPiece.y+r)*TS+1,TS-2,TS-2);tetX.shadowBlur=0;
+      tetX.strokeStyle='rgba(255,255,255,0.35)';tetX.strokeRect((tetPiece.x+c)*TS+1,(tetPiece.y+r)*TS+1,TS-2,TS-2);}
+  }));}
+}
+function tetCollide(p,board){
+  return p.shape.some((row,r)=>row.some((v,c)=>{
+    if(!v)return false;
+    const nx=p.x+c,ny=p.y+r;
+    return nx<0||nx>=TW||ny>=TH||(ny>=0&&board[ny][nx]);
+  }));
+}
+function tetMerge(){tetPiece.shape.forEach((row,r)=>row.forEach((v,c)=>{if(v&&tetPiece.y+r>=0)tetBoard[tetPiece.y+r][tetPiece.x+c]=tetPiece.color;}));}
+function tetClear(){
+  let cleared=0;
+  tetBoard=tetBoard.filter(row=>{if(row.every(v=>v)){cleared++;return false;}return true;});
+  while(tetBoard.length<TH)tetBoard.unshift(Array(TW).fill(0));
+  if(cleared){tetLines4+=cleared;tetScore4+=[0,100,300,500,800][cleared]*tetLevel4;tetLevel4=Math.floor(tetLines4/10)+1;
+    document.getElementById('tetScore').textContent=tetScore4;document.getElementById('tetLines').textContent=tetLines4;document.getElementById('tetLevel').textContent=tetLevel4;
+    if(tetScore4>tetHi4){tetHi4=tetScore4;}
+    clearInterval(tetInterval);tetInterval=setInterval(tetStep,Math.max(80,500-tetLevel4*40));
+  }
+}
+function tetStep(){
+  if(cur!=='tetris')return;
+  tetPiece.y++;
+  if(tetCollide(tetPiece,tetBoard)){tetPiece.y--;tetMerge();tetClear();tetPiece=tetRandPiece();
+    if(tetCollide(tetPiece,tetBoard)){tetRunning=false;clearInterval(tetInterval);
+      tetX.fillStyle='rgba(5,0,21,0.85)';tetX.fillRect(0,130,220,140);
+      tetX.fillStyle='#bf00ff';tetX.font='bold 16px Orbitron,sans-serif';tetX.textAlign='center';tetX.fillText('GAME OVER',110,170);
+      tetX.fillStyle='#fff';tetX.font='12px Orbitron,sans-serif';tetX.fillText('Score: '+tetScore4,110,198);return;}
+  }
+  tetDraw();
+}
+function resetTetris(){
+  tetRunning=true;tetBoard=tetNewBoard();tetScore4=0;tetLines4=0;tetLevel4=1;
+  tetPiece=tetRandPiece();
+  document.getElementById('tetScore').textContent='0';document.getElementById('tetLines').textContent='0';document.getElementById('tetLevel').textContent='1';
+  clearInterval(tetInterval);tetInterval=setInterval(tetStep,500);tetDraw();
+}
+document.addEventListener('keydown',e=>{
+  if(cur!=='tetris')return;
+  const p={...tetPiece,shape:tetPiece.shape.map(r=>[...r])};
+  if(e.key==='ArrowLeft'){p.x--;if(!tetCollide(p,tetBoard))tetPiece.x--;}
+  if(e.key==='ArrowRight'){p.x++;if(!tetCollide(p,tetBoard))tetPiece.x++;}
+  if(e.key==='ArrowDown'){p.y++;if(!tetCollide(p,tetBoard))tetPiece.y++;else{tetMerge();tetClear();tetPiece=tetRandPiece();}}
+  if(e.key==='ArrowUp'||e.key===' '){
+    const rotated=tetPiece.shape[0].map((_,i)=>tetPiece.shape.map(r=>r[i]).reverse());
+    const rp={...tetPiece,shape:rotated};if(!tetCollide(rp,tetBoard))tetPiece.shape=rotated;e.preventDefault();
+  }
+  tetDraw();
+});
+tetC.addEventListener('click',e=>{
+  if(!tetRunning)return;
+  const r=tetC.getBoundingClientRect();const x=e.clientX-r.left;
+  const p={...tetPiece,shape:tetPiece.shape.map(r=>[...r])};
+  if(x<55){p.x--;if(!tetCollide(p,tetBoard))tetPiece.x--;}
+  else if(x>165){p.x++;if(!tetCollide(p,tetBoard))tetPiece.x++;}
+  else{const rotated=tetPiece.shape[0].map((_,i)=>tetPiece.shape.map(r=>r[i]).reverse());const rp={...tetPiece,shape:rotated};if(!tetCollide(rp,tetBoard))tetPiece.shape=rotated;}
+  tetDraw();
+});
+
+// ========== FLAPPY SPIDER ==========
+const flC=document.getElementById('flappyCanvas');
+const flX=flC.getContext('2d');
+let flappyRunning=false,flScore=0,flHi=0,flBird={x:80,y:200,vy:0},flPipes=[],flFrame2=0,flStarted=false;
+const flGRAV=0.38,flFLAP=-7,flPIPE_GAP=130,flPIPE_W=40,flPIPE_SP=160;
+const flStars2=Array.from({length:40},()=>({x:Math.random()*300,y:Math.random()*400,s:Math.random()+0.3}));
+function flDraw(){
+  // bg gradient
+  const grad=flX.createLinearGradient(0,0,0,400);grad.addColorStop(0,'#000820');grad.addColorStop(1,'#0a0030');
+  flX.fillStyle=grad;flX.fillRect(0,0,300,400);
+  // stars
+  flStars2.forEach(s=>{flX.fillStyle='rgba(255,255,255,0.6)';flX.beginPath();flX.arc(s.x,s.y,s.s,0,Math.PI*2);flX.fill();});
+  // pipes
+  flPipes.forEach(p=>{
+    // pipe glow
+    flX.shadowColor='#00ff88';flX.shadowBlur=8;
+    const pGrad=flX.createLinearGradient(p.x,0,p.x+flPIPE_W,0);pGrad.addColorStop(0,'#00cc55');pGrad.addColorStop(1,'#008833');
+    flX.fillStyle=pGrad;
+    flX.fillRect(p.x,0,flPIPE_W,p.top);
+    flX.fillRect(p.x,p.top+flPIPE_GAP,flPIPE_W,400);
+    // pipe caps
+    flX.fillStyle='#00ff88';flX.fillRect(p.x-4,p.top-12,flPIPE_W+8,12);flX.fillRect(p.x-4,p.top+flPIPE_GAP,flPIPE_W+8,12);
+    flX.shadowBlur=0;
+  });
+  // bird
+  const bx=flBird.x,by=flBird.y;
+  flX.save();flX.translate(bx,by);flX.rotate(Math.min(Math.max(flBird.vy*0.06,-0.5),0.8));
+  flX.font='1.6rem serif';flX.textAlign='center';flX.textBaseline='middle';flX.fillText('🕷️',0,0);
+  flX.restore();flX.textBaseline='alphabetic';
+  // score
+  flX.fillStyle='#fff';flX.font='bold 22px Orbitron,sans-serif';flX.textAlign='center';flX.shadowColor='#000';flX.shadowBlur=4;flX.fillText(flScore,150,38);flX.shadowBlur=0;
+  if(!flStarted){flX.fillStyle='rgba(191,0,255,0.85)';flX.font='13px Orbitron,sans-serif';flX.fillText('TAP / SPACE to start!',150,220);}
+}
+function flLoop(){
+  if(cur!=='flappy')return;
+  if(flStarted){
+    flBird.vy+=flGRAV;flBird.y+=flBird.vy;
+    flFrame2++;
+    if(flFrame2%flPIPE_SP===0){const top=60+Math.random()*(400-flPIPE_GAP-120);flPipes.push({x:300,top,scored:false});}
+    flPipes.forEach(p=>{p.x-=2.5;if(!p.scored&&p.x+flPIPE_W<flBird.x){p.scored=true;flScore++;document.getElementById('flappyScore').textContent=flScore;if(flScore>flHi){flHi=flScore;document.getElementById('flappyHigh').textContent=flHi;}}});
+    flPipes=flPipes.filter(p=>p.x>-50);
+    // collision
+    const hit=flPipes.some(p=>{const bx=flBird.x,by=flBird.y;return bx+10>p.x&&bx-10<p.x+flPIPE_W&&(by-14<p.top||by+14>p.top+flPIPE_GAP);});
+    if(flBird.y>395||flBird.y<-5||hit){flappyRunning=false;flDraw();
+      flX.fillStyle='rgba(0,0,0,0.65)';flX.fillRect(0,140,300,120);
+      flX.fillStyle='#ff0080';flX.font='bold 18px Orbitron,sans-serif';flX.textAlign='center';flX.fillText('GAME OVER',150,185);
+      flX.fillStyle='#fff';flX.font='12px Orbitron,sans-serif';flX.fillText('Score: '+flScore+'  Best: '+flHi,150,210);return;
+    }
+  }
+  flDraw();if(flappyRunning)requestAnimationFrame(flLoop);
+}
+function flFlap(){if(!flStarted){flStarted=true;}flBird.vy=flFLAP;}
+function resetFlappy(){flappyRunning=true;flScore=0;flBird={x:80,y:200,vy:0};flPipes=[];flFrame2=0;flStarted=false;document.getElementById('flappyScore').textContent='0';flLoop();}
+document.addEventListener('keydown',e=>{if(cur!=='flappy'||e.key!==' ')return;e.preventDefault();flFlap();});
+flC.addEventListener('click',flFlap);flC.addEventListener('touchstart',e=>{e.preventDefault();flFlap();},{passive:false});
+
+// ========== PONG DUEL ==========
+const pgC=document.getElementById('pongCanvas');
+const pgX=pgC.getContext('2d');
+let pongRunning=false,pScore=0,aiScore=0,pgBall={x:160,y:190,vx:3.5,vy:3},pgPadP={x:135,w:70,y:355},pgPadAI={x:135,w:70,y:20},pgPaddlH=10;
+const pgW=320,pgH=380;
+function pgDraw(){
+  pgX.fillStyle='#050015';pgX.fillRect(0,0,pgW,pgH);
+  // mid line
+  pgX.strokeStyle='rgba(255,255,255,0.08)';pgX.setLineDash([10,10]);pgX.beginPath();pgX.moveTo(0,pgH/2);pgX.lineTo(pgW,pgH/2);pgX.stroke();pgX.setLineDash([]);
+  // paddles
+  [pgPadP,pgPadAI].forEach((pd,i)=>{
+    const grad=pgX.createLinearGradient(pd.x,0,pd.x+pd.w,0);
+    grad.addColorStop(0,i===0?'#ff0080':'#0080ff');grad.addColorStop(1,i===0?'#bf00ff':'#00ffff');
+    pgX.fillStyle=grad;pgX.shadowColor=i===0?'#ff0080':'#0080ff';pgX.shadowBlur=10;
+    pgX.beginPath();pgX.roundRect(pd.x,pd.y,pd.w,pgPaddlH,5);pgX.fill();pgX.shadowBlur=0;
+  });
+  // ball
+  pgX.beginPath();pgX.arc(pgBall.x,pgBall.y,8,0,Math.PI*2);
+  pgX.fillStyle='#ffffff';pgX.shadowColor='#ffffff';pgX.shadowBlur=14;pgX.fill();pgX.shadowBlur=0;
+  // scores
+  pgX.fillStyle='rgba(255,255,255,0.2)';pgX.font='bold 48px Orbitron,sans-serif';pgX.textAlign='center';
+  pgX.fillText(aiScore,160,pgH*0.35);pgX.fillText(pScore,160,pgH*0.72);
+  // labels
+  pgX.font='9px Rajdhani,sans-serif';pgX.fillStyle='rgba(0,128,255,0.5)';pgX.fillText('AI',160,pgH*0.18);
+  pgX.fillStyle='rgba(255,0,128,0.5)';pgX.fillText('YOU',160,pgH*0.88);
+}
+function pgLoop(){
+  if(cur!=='pong')return;
+  pgBall.x+=pgBall.vx;pgBall.y+=pgBall.vy;
+  // walls
+  if(pgBall.x<8||pgBall.x>pgW-8)pgBall.vx*=-1;
+  // AI paddle (smart)
+  const aiCenter=pgPadAI.x+pgPadAI.w/2;if(Math.abs(aiCenter-pgBall.x)>3){pgPadAI.x+=(pgBall.x<aiCenter?-1:1)*2.8;}
+  pgPadAI.x=Math.max(0,Math.min(pgW-pgPadAI.w,pgPadAI.x));
+  // paddle hits
+  if(pgBall.vy<0&&pgBall.y<=pgPadAI.y+pgPaddlH+8&&pgBall.y>=pgPadAI.y&&pgBall.x>=pgPadAI.x&&pgBall.x<=pgPadAI.x+pgPadAI.w){pgBall.vy=Math.abs(pgBall.vy)*1.03;pgBall.vx+=((pgBall.x-(pgPadAI.x+pgPadAI.w/2))/pgPadAI.w)*3;}
+  if(pgBall.vy>0&&pgBall.y>=pgPadP.y-8&&pgBall.y<=pgPadP.y+pgPaddlH&&pgBall.x>=pgPadP.x&&pgBall.x<=pgPadP.x+pgPadP.w){pgBall.vy=-Math.abs(pgBall.vy)*1.03;pgBall.vx+=((pgBall.x-(pgPadP.x+pgPadP.w/2))/pgPadP.w)*3;}
+  // cap speed
+  const sp=Math.sqrt(pgBall.vx**2+pgBall.vy**2);if(sp>9){pgBall.vx=pgBall.vx/sp*9;pgBall.vy=pgBall.vy/sp*9;}
+  // scoring
+  if(pgBall.y<0){aiScore++;document.getElementById('pongAI').textContent=aiScore;pgBall={x:160,y:190,vx:3.5,vy:3};}
+  if(pgBall.y>pgH){pScore++;document.getElementById('pongPlayer').textContent=pScore;pgBall={x:160,y:190,vx:3.5,vy:-3};}
+  // win
+  if(pScore>=7||aiScore>=7){pongRunning=false;pgDraw();
+    pgX.fillStyle='rgba(5,0,21,0.85)';pgX.fillRect(0,140,pgW,100);
+    pgX.fillStyle=pScore>=7?'#ff0080':'#0080ff';pgX.font='bold 17px Orbitron,sans-serif';pgX.textAlign='center';
+    pgX.fillText(pScore>=7?'🏆 YOU WIN!':'🤖 AI WINS',160,188);
+    pgX.fillStyle='rgba(255,255,255,0.6)';pgX.font='11px Orbitron,sans-serif';pgX.fillText(pScore+' - '+aiScore,160,214);return;
+  }
+  pgDraw();if(pongRunning)requestAnimationFrame(pgLoop);
+}
+function resetPong(){pongRunning=true;pScore=0;aiScore=0;pgBall={x:160,y:190,vx:3.5,vy:3};pgPadP={x:125,w:70,y:355};pgPadAI={x:125,w:70,y:20};document.getElementById('pongPlayer').textContent='0';document.getElementById('pongAI').textContent='0';pgLoop();}
+pgC.addEventListener('mousemove',e=>{const r=pgC.getBoundingClientRect();pgPadP.x=Math.max(0,Math.min(pgW-pgPadP.w,e.clientX-r.left-pgPadP.w/2));});
+pgC.addEventListener('touchmove',e=>{e.preventDefault();const r=pgC.getBoundingClientRect();pgPadP.x=Math.max(0,Math.min(pgW-pgPadP.w,e.touches[0].clientX-r.left-pgPadP.w/2));},{passive:false});
+
+
+const bnC=document.getElementById('bounceCanvas');
+const bnX=bnC.getContext('2d');
+let bounceRunning=false,bnScore=0,bnHi=0,bnBx=150,bnBy=150,bnVx=3,bnVy=-3,bnPx=150,bnPw=70;
+function resetBounce(){
+  bounceRunning=true;bnScore=0;bnBx=150;bnBy=150;bnVx=3;bnVy=-3;bnPx=150;
+  document.getElementById('bounceScore').textContent='0';
+  bounceLoop();
+}
+function bounceLoop(){
+  if(cur!=='bounce')return;
+  bnX.fillStyle='#050015';bnX.fillRect(0,0,300,300);
+  bnBx+=bnVx;bnBy+=bnVy;
+  if(bnBx<10||bnBx>290)bnVx*=-1;
+  if(bnBy<10)bnVy*=-1;
+  // paddle hit
+  if(bnBy>265&&bnBx>=bnPx-bnPw/2&&bnBx<=bnPx+bnPw/2){bnVy=-Math.abs(bnVy)-0.05;bnScore++;document.getElementById('bounceScore').textContent=bnScore;if(bnScore>bnHi){bnHi=bnScore;document.getElementById('bounceHigh').textContent=bnHi;}}
+  // paddle
+  bnX.fillStyle='rgba(191,0,255,0.8)';bnX.beginPath();bnX.roundRect(bnPx-bnPw/2,272,bnPw,10,5);bnX.fill();
+  // ball
+  bnX.beginPath();bnX.arc(bnBx,bnBy,10,0,Math.PI*2);bnX.fillStyle='#ff0080';bnX.shadowColor='#ff0080';bnX.shadowBlur=12;bnX.fill();bnX.shadowBlur=0;
+  if(bnBy>295){bounceRunning=false;bnX.fillStyle='rgba(191,0,255,0.85)';bnX.font='bold 14px Orbitron,sans-serif';bnX.textAlign='center';bnX.fillText('GAME OVER',150,150);return;}
+  if(bounceRunning)requestAnimationFrame(bounceLoop);
+}
+bnC.addEventListener('mousemove',e=>{const r=bnC.getBoundingClientRect();bnPx=e.clientX-r.left;});
+bnC.addEventListener('touchmove',e=>{e.preventDefault();const r=bnC.getBoundingClientRect();bnPx=e.touches[0].clientX-r.left;},{passive:false});
+
+</script>
+</body>
+</html>
